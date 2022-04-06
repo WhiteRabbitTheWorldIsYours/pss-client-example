@@ -2,15 +2,15 @@
 
 This is a demo of how any streaming site may use WhiteRabbit client to request payment for the movie from it's users.
 
-## Usage
+## Running the demo
 
 ```
-npm install
-npm start
+npx http-server .
 ```
 
 ## WhiteRabbitClient usage
 
+### Option 1. Install from npm
 Install `@whiterabbitjs/client` package
 
 ```sh
@@ -27,7 +27,7 @@ const client = new WhiteRabbitClient();
 client.requestPayment('tt8367814');
 ```
 
-Or if you are not using npm:
+### Option 2. Use as module
 
 ```js
 import { WhiteRabbitClient } from 'https://unpkg.com/@whiterabbitjs/client@2.40.1/dist/index.min.mjs';
