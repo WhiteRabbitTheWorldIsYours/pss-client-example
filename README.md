@@ -4,6 +4,13 @@ This is a demo of how any streaming site may use WhiteRabbit client to request p
 
 ## Usage
 
+```
+npm install
+npm start
+```
+
+## WhiteRabbitClient usage
+
 Install `@whiterabbitjs/client` package
 
 ```sh
