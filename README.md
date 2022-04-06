@@ -30,7 +30,11 @@ Arguments:
 
 * `whiteRabbitConfig` — config object with attributes:
 
-  * `host` — (optional) host of whiterabbit wallet instance. Defaults to `https://wallet.whiterabbit.one`
+  * `host` — (optional) host of whiterabbit wallet instance. 
+     Possible options:
+      - `https://wallet.whiterabbit.one`. (default). Production mode. Card deposits will require a real card. If `host` is not specified this mode will be used
+      - `https://staging-wallet.whiterabbit.one`. Test mode. Card deposits can be tested with a test card (see below).
+  * `campaign` — (optional) name of the campaign. Could be used to adapt look and feel of the payment popup
 
 ### `client.requestPayment(imdbId, [pssAddress], [medium])`
 
@@ -38,6 +42,6 @@ Request a payment by movie's imdb ID. Example: `tt8367814`. Returns a Promise wh
 
 Arguments:
 * `imdbId` - imdb ID for the movie.
-* `pssAddress - (Optional) A public address on XDAI Chain you want to receive your PSS share to. Every payment collected via your streaming site will be split between rightsholder, WhiteRabbit and you. This is your way to specify the address you want to reeive your parts of the split to.
+* `pssAddress` - (Optional) A public address on XDAI Chain you want to receive your PSS share to. Every payment collected via your streaming site will be split between rightsholder, WhiteRabbit and you. This is your way to specify the address you want to receive your parts of the split to.
 * `medium` - (Optional) One of the possible mediums. Defaults to "EST". Don't change it unless you understand what you are doing.
 
