@@ -2,45 +2,65 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>K5 Partner Streaming Site</title>
+	<title>Streaming site example</title>
 	<meta name="description" content="">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="https://cdn.plyr.io/3.6.12/plyr.css" />
+  <!-- page styles. These styles are not needed for the player, can be different -->
+  <style>
+    body {
+      margin: 0;
+      background-color: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .plyr--video {
+      height: 100%;
+    }
+  </style>
+  <!-- /page styles -->
 </head>
 <body>
-<div id="app" v-cloak>
-	<header class="main-header">
-      <img class="logo" align="middle" width="20%" height="20%" src="images/logo.jpeg" alt="k5 logo">
-	</header>
-	<div class="container">
-		<main class="main-content">
-			<h1 class="main-headline">K5 Partner Streaming Site</h1>
-			<ul class="video-list">
-				<li v-for="video in videos" class="video-list-item">
-					<a href="javascript: void(0);" v-on:click="getPopup(video);">
-						<img :src="video.posterUrl" alt="">
-            <h4 class="video-item-name">{{video.title}}</h4>
-					</a>
-				</li>
-			</ul>
-		</main>
-  </div>
-<div class="popup" v-show="popup.on">
-	<div v-on:click="removePopup(this)" class="popup-overlay"></div>
-	<div class="popup-inner" id="popup-inner">
-		<div>
-			<!-- the controlList controls what kind of controls are allowed for this video the nofullscreen option is the most important as it forbids users to trigger the video element in itself to go fullscreen-->
-			<video id="player" disablePictureInPicture controls controlsList="nofullscreen nodownload noremoteplayback">
-        <source type="video/mp4" :src="popup.video.video" />
-      </video>
-      <input type="hidden" name="video_title"   :value="popup.video.title">
-      <input type="hidden" name="video_poster"  :value="popup.video.posterUrl">
-		</div>
-  </div>
-</div>
-</div>
-  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
-	<script src="./js/app.ts"></script>
+
+  <!-- player HTML code. Unique per movie -->
+  <video id="player" crossorigin preload="false" disablePictureInPicture controls controlsList="nodownload" src="https://wr-trailers.s3.eu-central-1.amazonaws.com/Night_Train_To_Lisbon_Official_Trailer.mp4" data-poster="https://image.tmdb.org/t/p/w500/b8dsGEWUFFErKaOFxjrWjiBfQCq.jpg" data-plyr-config='{ "title": "Night Train To Lisbon" }' data-imdbid="tt1654523">
+	</video>
+  <!-- /player HTML code -->
+
+  <!-- player JS code. Is the same for all the movies -->
+  <script src="https://cdn.plyr.io/3.6.12/plyr.js"></script>
+  <script type="module">
+    const video = document.getElementById('player');
+    const player = new Plyr(video);
+    import { WhiteRabbitClient } from 'https://unpkg.com/@whiterabbitjs/client@2.40.1/dist/index.min.mjs';
+    const client = new WhiteRabbitClient({ host: 'https://staging-wallet.whiterabbit.one', campaign: '25h' });
+    
+    let requestingPayment;
+
+    video.addEventListener("play", async () => {
+      const imdbId = video.dataset.imdbid;
+      const paid = Boolean(localStorage.getItem(`wr-${imdbId}`) || false);
+      // do nothing if paid already
+      if (paid) return;
+
+      player.pause();
+      // keep paused while the payment is not complete/declined
+      if (requestingPayment) return;
+
+      requestingPayment = true;
+      const res = await client.requestPayment(imdbId);
+      requestingPayment = false;
+
+      if (res && res.status) {
+        // resume playback if paid
+        localStorage.setItem(`wr-${imdbId}`, String(res.status));
+        player.play();
+      }
+    });
+  </script>
+  <!-- /player JS code -->
 </body>
 </html>
