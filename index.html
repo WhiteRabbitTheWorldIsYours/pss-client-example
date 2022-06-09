@@ -47,9 +47,9 @@
     <script type="module">
       const video = document.getElementById("player");
       const player = new Plyr(video);
-      import { WhiteRabbitClient } from "https://unpkg.com/@whiterabbitjs/client@2.40.8/dist/index.min.mjs";
+      import { WhiteRabbitClient } from "https://unpkg.com/@whiterabbitjs/client@3.0.0/dist/index.min.mjs";
       const client = new WhiteRabbitClient({
-        host: "https://staging-wallet.whiterabbit.one",
+        env: "test",
         campaign: "25h",
       });
 
@@ -70,6 +70,7 @@
         requestingPayment = false;
 
         if (res && res.status) {
+          console.log('Payment', await client.getPayment(res.paymentId));
           // resume playback if paid
           localStorage.setItem(`wr-${imdbId}`, String(res.status));
           player.play();
