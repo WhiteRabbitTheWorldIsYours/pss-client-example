@@ -9,71 +9,102 @@
       name="viewport"
       content="width=device-width, initial-scale=1, maximum-scale=1"
     />
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.6.12/plyr.css" />
     <!-- page styles. These styles are not needed for the player, can be different -->
     <style>
       body {
-        margin: 0;
-        background-color: black;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        padding: 30px;
+        background-color: white;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
       }
 
-      .plyr--video {
-        height: 100%;
+      a {
+        text-decoration: none;
       }
+
+      button {
+        background: blue;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 10px;
+        font-weight: bold;
+      }
+
+      sub {
+        display: block;
+        opacity: 0.5;
+        font-size: 12px;
+        margin-top: 5px;
+      }
+
     </style>
     <!-- /page styles -->
   </head>
   <body>
     <!-- player HTML code. Unique per movie -->
-    <video
-      id="player"
-      crossorigin
-      preload="false"
-      disablePictureInPicture
-      controls
-      controlsList="nodownload"
-      src="https://wr-trailers.s3.eu-central-1.amazonaws.com/Night_Train_To_Lisbon_Official_Trailer.mp4"
-      data-poster="https://image.tmdb.org/t/p/w500/b8dsGEWUFFErKaOFxjrWjiBfQCq.jpg"
-      data-plyr-config='{ "title": "Night Train To Lisbon" }'
-      data-imdbid="tt1654523"
-    ></video>
+    <div id="player" style="height: 281px; width: 500px">
+      <video controls src="https://static.whiterabbit.one/july_rain.mp4" style="height: 281px; width: 500px" />
+    </div>
     <!-- /player HTML code -->
 
+    <div id="poster" style="height: 281px; background-color: rgba(0,0,0,0.1); width: auto; width: 500px; margin-top: -284px;">
+      <img src="https://www.themoviedb.org/t/p/original/mQ46SCSdInMgeObKdDFYZ3mpQ95.jpg" width="500"/>
+    </div>
+
+    <div id="loading" style="display: none; background: black; height: 281px; width: 500px; margin-top: -281px; opacity: 0.5; align-items: center; justify-content: center; color: white">Checking payment</div>
+
+    <h1>July Rain (1967)</h1>
+    <button id="pay">Pay to watch</button>
+    <sub>Powered by <a href="https://whiterabbit.one">White Rabbit</a></sub>
+
     <!-- player JS code. Is the same for all the movies -->
-    <script src="https://cdn.plyr.io/3.6.12/plyr.js"></script>
     <script type="module">
-      const video = document.getElementById("player");
-      const player = new Plyr(video);
-      import { WhiteRabbitClient } from "https://unpkg.com/@whiterabbitjs/client@3.0.2/dist/index.min.mjs";
+      const payButton = document.getElementById("pay");
+      const loading = document.getElementById("loading");
+      const poster = document.getElementById("poster");
+      const player = document.getElementById("player");
+      const imdbId = "tt0171408"; // IMDB id of The July Rain 
+
+      import { WhiteRabbitClient } from "https://unpkg.com/@whiterabbitjs/client@4.0.1/dist/index.min.mjs";
+      
       const client = new WhiteRabbitClient({
-        env: "test",
-        campaign: "25h",
+        apiKey: "kosta-test-abd1-89a8b883a1f6", // Your API key goes here
       });
 
       let requestingPayment;
 
-      video.addEventListener("play", async () => {
-        const imdbId = video.dataset.imdbid;
-        const paid = Boolean(localStorage.getItem(`wr-${imdbId}`) || false);
-        // do nothing if paid already
-        if (paid) return;
+      const enableVideo = () => {
+        player.style.display = 'block';
+        loading.style.display = 'none';
+        poster.style.display = 'none';
+      }
 
-        player.pause();
+      const paymentId = localStorage.getItem(`wr-${imdbId}`) || "";
+      // do nothing if paid already
+      if (paymentId) {
+        loading.style.display = 'flex';
+        const payment = await client.getPayment(paymentId);
+        if (payment) {
+          enableVideo();
+        } else {
+          loading.style.display = 'none';
+        }
+      };
+
+      payButton.addEventListener("click", async () => {
+
         // keep paused while the payment is not complete/declined
         if (requestingPayment) return;
 
         requestingPayment = true;
         const res = await client.requestPayment(imdbId);
+        console.log(res);
         requestingPayment = false;
 
         if (res && res.status) {
-          console.log('Payment', await client.getPayment(res.paymentId));
           // resume playback if paid
-          localStorage.setItem(`wr-${imdbId}`, String(res.status));
-          player.play();
+          localStorage.setItem(`wr-${imdbId}`, String(res.paymentId));
+          enableVideo();
         }
       });
     </script>
