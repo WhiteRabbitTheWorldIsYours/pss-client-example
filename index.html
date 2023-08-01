@@ -42,12 +42,12 @@
   </head>
   <body>
     <!-- player HTML code. Unique per movie -->
-    <div id="player" style="height: 281px; width: 500px">
+    <div id="player" style="height: 281px; width: 500px; display: none">
       <video controls src="https://static.whiterabbit.one/july_rain.mp4" style="height: 281px; width: 500px" />
     </div>
     <!-- /player HTML code -->
 
-    <div id="poster" style="height: 281px; background-color: rgba(0,0,0,0.1); width: auto; width: 500px; margin-top: -284px;">
+    <div id="poster" style="height: 281px; background-color: rgba(0,0,0,0.1); width: auto; width: 500px;">
       <img src="https://www.themoviedb.org/t/p/original/mQ46SCSdInMgeObKdDFYZ3mpQ95.jpg" width="500"/>
     </div>
 
@@ -65,7 +65,7 @@
       const player = document.getElementById("player");
       const imdbId = "tt0171408"; // IMDB id of The July Rain 
 
-      import { WhiteRabbitClient } from "https://unpkg.com/@whiterabbitjs/client@4.0.1/dist/index.min.mjs";
+      import { WhiteRabbitClient } from "https://unpkg.com/@whiterabbitjs/client@4.1.0/dist/index.min.mjs";
       
       const client = new WhiteRabbitClient({
         apiKey: "kosta-test-abd1-89a8b883a1f6", // Your API key goes here
