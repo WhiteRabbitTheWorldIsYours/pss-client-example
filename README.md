@@ -10,7 +10,7 @@ npx http-server .
 
 ## WhiteRabbitClient usage
 
-See [PSS setup guide](https://white-rabbit.gitbook.io/docs/guides/setting-up-a-partner-streaming-site-pss) and [Payment API reference](https://white-rabbit.gitbook.io/docs/api-reference/payment-api).
+See [PSS setup guide](https://docs.whiterabbit.one/guides/setting-up-a-partner-streaming-site-pss) and [Payment API reference](https://docs.whiterabbit.one/api-reference/payment-api).
 
 ## Test card details
 
